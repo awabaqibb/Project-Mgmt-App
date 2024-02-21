@@ -7,6 +7,7 @@ function App() {
   const [projectState, setProjectState] = useState({
     projectId: undefined,
     projects: [],
+    tasks: [],
   });
 
   const [projectSelected, setProjectSelected] = useState(false);
@@ -21,15 +22,40 @@ function App() {
     });
   };
 
+  const handleAddTask = (desc) => {
+    setProjectState((prevState) => {
+      const newTask = {
+        desc,
+        taskId: uuidv4(),
+        projectId: prevState.projectId,
+      };
+
+      return {
+        ...prevState,
+        tasks: [...prevState.tasks, newTask],
+      };
+    });
+  };
+
+  const handleClearTask = (taskId) => {
+    console.log(taskId);
+    setProjectState((prevState) => {
+      return {
+        ...prevState,
+        tasks: prevState.tasks.filter((task) => task.taskId !== taskId),
+      };
+    });
+  };
+
   const handleAddProject = (projectData) => {
     const newProject = {
       ...projectData,
-      id: uuidv4(),
     };
 
     setProjectState((prevState) => {
       return {
         ...prevState,
+        projectId: uuidv4(),
         projects: [...prevState.projects, newProject],
       };
     });
@@ -79,6 +105,9 @@ function App() {
           <SelectedItem
             project={currentProject}
             handleDelete={handleDeleteProject}
+            onAddTask={handleAddTask}
+            onClearTask={handleClearTask}
+            tasks={projectState.tasks}
           />
         )
       ) : (
